@@ -12,6 +12,11 @@ CREATE TABLE IF NOT EXISTS notion_credentials (
     api_key_encrypted TEXT NOT NULL,         -- Encrypted Notion API token (secret_xxx)
     workspace_name TEXT,                     -- Optional: human-readable workspace name
 
+    -- Target configuration (optional)
+    notion_database_id TEXT,                 -- Optional: target Notion database ID
+    notion_page_id TEXT,                     -- Optional: target Notion page ID
+    config TEXT,                             -- Optional: JSON config for app-specific settings
+
     -- Metadata
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,

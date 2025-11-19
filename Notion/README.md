@@ -42,6 +42,44 @@ Secure, reusable Notion API client for all Notioneers applications.
 
 ---
 
+## API Version Management
+
+**CRITICAL:** All apps use a centralized API version to prevent integration breaks.
+
+### Current Configuration
+
+Defined in `NotionConfig.php`:
+```php
+NotionConfig::API_BASE_URL = 'https://api.notion.com/v1'
+NotionConfig::API_VERSION = '2022-06-28'
+```
+
+### When Notion Updates the API
+
+1. Check: https://developers.notion.com/reference/changelog
+2. Update `NotionConfig.php` with new version
+3. **All apps automatically use new version** (no code changes needed!)
+
+### ❌ WRONG - DO NOT DO THIS
+```php
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Notion-Version: 2022-06-28',  // ❌ Hardcoded = pain in future
+    'Notion-Version: 2025-09-03',  // ❌ Wrong version = API errors
+]);
+```
+
+### ✅ RIGHT - ALWAYS DO THIS
+```php
+use Notioneers\Shared\Notion\NotionConfig;
+
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Notion-Version: ' . NotionConfig::API_VERSION,  // ✅ Centralized
+    'Authorization: Bearer ' . $token,
+]);
+```
+
+---
+
 ## Quick Start
 
 ### 1. Setup Environment

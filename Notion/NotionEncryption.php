@@ -11,7 +11,7 @@ namespace Notioneers\Shared\Notion;
 class NotionEncryption {
     private const ALGORITHM = 'aes-256-cbc';
     private const HASH_ALGO = 'sha256';
-    private const TAG_LENGTH = 16;
+    private const TAG_LENGTH = 32; // SHA-256 produces 32 bytes
 
     private string $encryptionKey;
     private string $hmacKey;

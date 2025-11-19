@@ -15,8 +15,9 @@ namespace Notioneers\Shared\Notion;
 use PDO;
 
 class NotionService {
-    private const NOTION_API_BASE = 'https://api.notion.com/v1';
-    private const NOTION_API_VERSION = '2024-08-15';
+    // Use centralized configuration
+    // private const NOTION_API_BASE = 'https://api.notion.com/v1';
+    // private const NOTION_API_VERSION = '2022-06-28';
     // Notion API: 3 requests/second = 180/minute
     // Using 150/minute = 2.5 req/second (safe margin below limit)
     private const RATE_LIMIT_REQUESTS_PER_MINUTE = 150;
@@ -75,7 +76,8 @@ class NotionService {
         int $pageSize = 100,
         ?string $startCursor = null
     ): array {
-        $cacheKey = "database_query:{$databaseId}:" . md5(json_encode(['filter' => $filter, 'sorts' => $sorts]));
+        // IMPORTANT: Include startCursor in cache key to avoid returning the same page on pagination
+        $cacheKey = "database_query:{$databaseId}:" . md5(json_encode(['filter' => $filter, 'sorts' => $sorts, 'cursor' => $startCursor]));
 
         // Check cache first (5 minutes for database queries)
         if ($cached = $this->cache->get($cacheKey)) {
@@ -289,13 +291,13 @@ class NotionService {
         // Rate limiting - wait if necessary
         $this->rateLimiter->waitIfNecessary($this->appName, $this->workspaceId);
 
-        $url = self::NOTION_API_BASE . $endpoint;
+        $url = NotionConfig::API_BASE_URL . $endpoint;
 
         $ch = curl_init($url);
 
         $headers = [
             'Authorization: Bearer ' . $this->apiKey,
-            'Notion-Version: ' . self::NOTION_API_VERSION,
+            'Notion-Version: ' . NotionConfig::API_VERSION,
             'Content-Type: application/json',
             'User-Agent: Notioneers/1.0',
         ];
