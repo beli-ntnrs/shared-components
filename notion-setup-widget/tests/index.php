@@ -137,13 +137,12 @@
             padding: 1.5rem;
             border-radius: 8px;
             border: 1px solid #e0e0e0;
-            display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
 
         .resources-grid.show {
-            display: grid;
+            display: grid !important;
         }
 
         .resources-column {
