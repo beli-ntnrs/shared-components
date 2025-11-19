@@ -290,15 +290,16 @@ class NotionClient {
     /**
      * Record workspace usage (for audit trail)
      *
-     * @return void
+     * @return self For chaining
      * @throws \RuntimeException If no workspace set
      */
-    public function recordUsage(): void {
+    public function recordUsage(): self {
         if (!$this->currentWorkspace) {
             throw new \RuntimeException('No workspace selected. Call setWorkspace() first.');
         }
 
         $this->dbHelper->recordCredentialUsage($this->appName, $this->currentWorkspace);
+        return $this;
     }
 
     /**

@@ -3,7 +3,9 @@
  * PHPUnit Bootstrap - Setup for NotionSetupWidget tests
  */
 
-// Define root path
+// Define paths - we're in shared/components/notion-setup-widget/tests/
+define('WIDGET_ROOT', realpath(__DIR__ . '/..'));
+define('COMPONENTS_ROOT', realpath(__DIR__ . '/../..'));
 define('ROOT_PATH', realpath(__DIR__ . '/../../..'));
 
 // Create test database
@@ -16,15 +18,22 @@ if (file_exists($testDbPath)) {
 putenv('ENCRYPTION_MASTER_KEY=' . bin2hex(random_bytes(32)));
 
 // Load Notion component autoloader
-require_once ROOT_PATH . '/shared/components/Notion/NotionEncryption.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionDatabaseHelper.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionService.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionServiceFactory.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionCache.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionRateLimiter.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionApiException.php';
-require_once ROOT_PATH . '/shared/components/Notion/NotionConfig.php';
+$notionPath = COMPONENTS_ROOT . '/Notion';
+if (!is_dir($notionPath)) {
+    // Fallback: try the old path
+    $notionPath = COMPONENTS_ROOT . '/notion-api';
+}
+
+require_once $notionPath . '/NotionEncryption.php';
+require_once $notionPath . '/NotionDatabaseHelper.php';
+require_once $notionPath . '/NotionService.php';
+require_once $notionPath . '/NotionServiceFactory.php';
+require_once $notionPath . '/NotionCache.php';
+require_once $notionPath . '/NotionRateLimiter.php';
+require_once $notionPath . '/NotionApiException.php';
+require_once $notionPath . '/NotionConfig.php';
 
 // Load Setup Widget autoloader
-require_once ROOT_PATH . '/shared/components/notion-setup-widget/NotionSetupWidget.php';
-require_once ROOT_PATH . '/shared/components/notion-setup-widget/NotionSetupWidgetController.php';
+require_once WIDGET_ROOT . '/NotionSetupWidget.php';
+require_once WIDGET_ROOT . '/NotionSetupWidgetController.php';
+require_once WIDGET_ROOT . '/NotionClient.php';

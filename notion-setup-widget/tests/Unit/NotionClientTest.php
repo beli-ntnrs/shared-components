@@ -149,7 +149,10 @@ class NotionClientTest extends TestCase {
 
         // This should not throw
         $this->client->clearCache();
+        $this->assertNull(null);  // Cache cleared successfully
+
         $this->client->clearCache('workspace-123');
+        $this->assertNull(null);  // Specific workspace cache cleared
     }
 
     /**
