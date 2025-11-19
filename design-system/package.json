@@ -1,0 +1,28 @@
+{
+  "name": "notioneers-design-system",
+  "version": "1.0.0",
+  "description": "Notioneers Design System - Bootstrap 5 with Brand Colors",
+  "main": "css/theme.css",
+  "scripts": {
+    "build": "sass scss:css",
+    "watch": "sass --watch scss:css",
+    "build:min": "sass scss:css --style=compressed"
+  },
+  "keywords": [
+    "bootstrap",
+    "notioneers",
+    "design-system",
+    "sass",
+    "css"
+  ],
+  "author": "Notioneers",
+  "license": "MIT",
+  "devDependencies": {
+    "sass": "^1.69.0",
+    "bootstrap": "^5.3.0"
+  },
+  "browserslist": [
+    "defaults",
+    "not ie 11"
+  ]
+}

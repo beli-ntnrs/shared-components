@@ -1,0 +1,13 @@
+// Notioneers Bootstrap Theme
+
+// 1. Import fonts
+@import 'fonts';
+
+// 2. Import variables (before Bootstrap)
+@import 'variables';
+
+// 3. Import Bootstrap
+@import '../node_modules/bootstrap/scss/bootstrap';
+
+// 4. Import custom styles (after Bootstrap)
+@import 'custom';

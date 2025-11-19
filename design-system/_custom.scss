@@ -1,0 +1,112 @@
+// Custom component styles
+// Notioneers brand-specific components
+
+// Custom Button Styles
+// Based on: https://notioneers.eu/en/ai-style-guide
+
+// Dark Green Button
+.btn-dark-green {
+  background-color: $depth;
+  color: $bloom;
+  border: none;
+  font-weight: $font-weight-medium;
+
+  &:hover,
+  &:focus {
+    background-color: darken($depth, 5%);
+    color: $bloom;
+  }
+
+  &:active {
+    background-color: darken($depth, 10%);
+    color: $bloom;
+  }
+}
+
+// Bloom Button
+.btn-bloom {
+  background-color: #172D1B;
+  color: $bloom;
+  border: none;
+  font-weight: $font-weight-medium;
+
+  &:hover,
+  &:focus {
+    background-color: lighten(#172D1B, 5%);
+    color: $bloom;
+  }
+
+  &:active {
+    background-color: lighten(#172D1B, 10%);
+    color: $bloom;
+  }
+}
+
+// Grey Button (Transparent or subtle)
+.btn-grey {
+  background-color: transparent;
+  color: $shade;
+  border: 1px solid $shade;
+  font-weight: $font-weight-medium;
+
+  &:hover,
+  &:focus {
+    background-color: $shade;
+    color: $halo;
+    border-color: $shade;
+  }
+
+  &:active {
+    background-color: darken($shade, 5%);
+    color: $halo;
+  }
+}
+
+// Typography Utilities
+.text-depth { color: $depth; }
+.text-bloom { color: $bloom; }
+.text-shade { color: $shade; }
+.text-root { color: $root; }
+.text-stone { color: $stone; }
+
+// Background Utilities
+.bg-halo { background-color: $halo; }
+.bg-mist { background-color: $mist; }
+.bg-veil { background-color: $veil; }
+.bg-sage { background-color: $sage; }
+.bg-depth { background-color: $depth; }
+.bg-shade { background-color: $shade; }
+
+// Title styling (never use font-weight 600 for titles)
+h1, .h1,
+h2, .h2 {
+  font-weight: $font-weight-medium; // 500, never 600 for titles
+}
+
+// Bold text highlighting (only place to use 600)
+.text-highlight,
+strong,
+b {
+  font-weight: $font-weight-semibold; // 600 only for highlighting
+}
+
+// Table Styles
+// Striped rows using Mist color from brand palette
+.table-striped {
+  > tbody > tr:nth-of-type(odd) > * {
+    --bs-table-bg-type: transparent;
+  }
+
+  > tbody > tr:nth-of-type(even) > * {
+    --bs-table-bg-type: #{$mist}; // #DEECDC - Light surfaces
+    background-color: $mist;
+  }
+}
+
+// Hover effect using Veil color
+.table-hover {
+  > tbody > tr:hover > * {
+    --bs-table-bg-state: #{$veil}; // #D1E2D1 - Hover states
+    background-color: $veil;
+  }
+}
