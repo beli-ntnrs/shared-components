@@ -602,6 +602,7 @@
                     currentValidToken = token;
                     currentResources = data.resources || { pages: [], databases: [] };
                     showValidationSuccess(data);
+                    displayResources(data.resources || { pages: [], databases: [] });
                     tokenName.disabled = false;
                     updateSaveButtonState();
                 } else {
@@ -828,17 +829,11 @@
                     tokenName.value = '';
                     tokenName.disabled = true;
                     hideValidation();
+                    currentValidToken = null;
+                    currentResources = null;
 
                     // Reload tokens list
                     await loadTokens();
-
-                    // Show resources for the saved token
-                    if (currentResources) {
-                        displayResources(currentResources);
-                    }
-
-                    currentValidToken = null;
-                    currentResources = null;
 
                     // Show success message
                     showTemporaryMessage('Token saved successfully!', 'success');
