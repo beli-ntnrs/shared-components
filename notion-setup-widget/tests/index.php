@@ -444,13 +444,13 @@
             <!-- Token Input Form -->
             <div class="form-group">
                 <label class="form-label" for="tokenInput">Notion Integration Token</label>
-                <textarea
+                <input
+                    type="text"
                     id="tokenInput"
                     class="form-control"
                     placeholder="Paste your Notion integration token (starts with ntn_ or secret_)"
-                    rows="3"
                     autofocus
-                ></textarea>
+                />
                 <small class="form-text text-muted">
                     Get your token from <a href="https://www.notion.so/my-integrations" target="_blank">My Integrations</a>
                 </small>
@@ -602,7 +602,6 @@
                     currentValidToken = token;
                     currentResources = data.resources || { pages: [], databases: [] };
                     showValidationSuccess(data);
-                    displayResources(data.resources || { pages: [], databases: [] });
                     tokenName.disabled = false;
                     updateSaveButtonState();
                 } else {
@@ -829,11 +828,17 @@
                     tokenName.value = '';
                     tokenName.disabled = true;
                     hideValidation();
-                    currentValidToken = null;
-                    currentResources = null;
 
                     // Reload tokens list
                     await loadTokens();
+
+                    // Show resources for the saved token
+                    if (currentResources) {
+                        displayResources(currentResources);
+                    }
+
+                    currentValidToken = null;
+                    currentResources = null;
 
                     // Show success message
                     showTemporaryMessage('Token saved successfully!', 'success');
