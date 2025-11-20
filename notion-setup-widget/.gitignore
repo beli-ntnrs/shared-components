@@ -1,0 +1,21 @@
+# Dependencies
+vendor/
+node_modules/
+
+# Cache
+.phpunit.result.cache
+.phpunit.cache/
+
+# Composer
+composer.lock
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
