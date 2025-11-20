@@ -1,0 +1,51 @@
+// Notioneers Brand Variables & Palette
+// Based on: https://notioneers.eu/en/ai-style-guide
+//
+// These are Notioneers-specific brand variables.
+// Bootstrap theme color mappings are in _bootstrap-overrides.scss
+// Reference: https://getbootstrap.com/docs/5.3/customize/sass/
+
+// ============================================
+// Primary Brand Colors
+// ============================================
+$depth: #063312 !default;        // Font color - Primary text, headlines
+$halo: #F2F4F2 !default;         // Background color - Surfaces, sections
+$bloom: #92EF9A !default;        // Logo color - Brand accent, CTAs
+$shade: #0B1E0F !default;        // Dark contrast - Text on light surfaces
+
+// ============================================
+// Neutral Palette
+// ============================================
+$root: #454F45 !default;         // Standard text, icons, dark foundations
+$sage: #AFCAAF !default;         // Soft backgrounds, UI strokes
+$mist: #DEECDC !default;         // Light surfaces, large containers
+$stone: #7B847B !default;        // Secondary text, subtle UI elements
+$veil: #D1E2D1 !default;         // Input backgrounds, hover states
+
+// ============================================
+// Accent Colors
+// ============================================
+$aeris: #52B4D9 !default;        // Blue accent
+$nimbus: #5453CB !default;       // Purple accent
+$muse: #BD73ED !default;         // Pink accent
+$coral: #ED6767 !default;        // Red/Coral accent
+$solea: #FFDB76 !default;        // Yellow accent
+$cove: #F2AA7F !default;         // Warm accent
+
+// ============================================
+// Typography - Font Weights
+// ============================================
+$font-weight-light: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-medium: 500 !default;
+$font-weight-semibold: 600 !default;
+$font-weight-bold: 700 !default;
+
+// ============================================
+// Typography - Font Sizes
+// ============================================
+$h1-font-size: 2.25rem !default;   // Title
+$h2-font-size: 1.5rem !default;    // Heading
+$font-size-base: 1rem !default;
+$font-size-lg: 1.2rem !default;    // Quote
+$font-size-sm: 0.875rem !default;
