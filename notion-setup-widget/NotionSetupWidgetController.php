@@ -247,11 +247,21 @@ class NotionSetupWidgetController
                 );
             }
 
+            // Get credentials (includes decrypted API key)
+            $credentials = $this->dbHelper->getCredentials($appName, $workspaceId);
+
+            // Get configuration
             $config = $this->dbHelper->getConfiguration($appName, $workspaceId);
+
+            // Merge them
+            $result = array_merge($config, [
+                'api_key' => $credentials['api_key'],
+                'workspace_name' => $credentials['workspace_name']
+            ]);
 
             return $this->json($response, [
                 'success' => true,
-                'configuration' => $config,
+                'configuration' => $result,
             ]);
         } catch (\RuntimeException $e) {
             return $this->jsonError(
