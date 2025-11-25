@@ -9,11 +9,13 @@ namespace Notioneers\Shared\Notion;
 
 use PDO;
 
-class NotionDatabaseHelper {
+class NotionDatabaseHelper
+{
     private PDO $pdo;
     private NotionEncryption $encryption;
 
-    public function __construct(PDO $pdo, NotionEncryption $encryption) {
+    public function __construct(PDO $pdo, NotionEncryption $encryption)
+    {
         $this->pdo = $pdo;
         $this->encryption = $encryption;
     }
@@ -25,7 +27,8 @@ class NotionDatabaseHelper {
      * @return void
      * @throws \RuntimeException If table creation fails
      */
-    public function initializeDatabase(): void {
+    public function initializeDatabase(): void
+    {
         $sqlFile = __DIR__ . '/CreateNotionCredentialsTable.sql';
 
         if (!file_exists($sqlFile)) {
@@ -50,7 +53,8 @@ class NotionDatabaseHelper {
      * @return void
      * @throws \RuntimeException If migration fails
      */
-    private function applyMigrations(): void {
+    private function applyMigrations(): void
+    {
         try {
             // Add missing columns if they don't exist
             $this->addColumnIfNotExists('notion_database_id', 'TEXT');
@@ -80,7 +84,8 @@ class NotionDatabaseHelper {
      * @param string $columnType Column type (e.g., 'TEXT', 'INTEGER')
      * @return void
      */
-    private function addColumnIfNotExists(string $columnName, string $columnType): void {
+    private function addColumnIfNotExists(string $columnName, string $columnType): void
+    {
         try {
             // Try to query the column - if it fails, the column doesn't exist
             $this->pdo->query("SELECT $columnName FROM notion_credentials LIMIT 1");
@@ -146,7 +151,8 @@ class NotionDatabaseHelper {
      * @return array{api_key: string, workspace_name: string|null} Decrypted credentials
      * @throws \RuntimeException If credentials not found or decryption fails
      */
-    public function getCredentials(string $appName, string $workspaceId): array {
+    public function getCredentials(string $appName, string $workspaceId): array
+    {
         $query = <<<SQL
             SELECT api_key_encrypted, workspace_name
             FROM notion_credentials
@@ -185,7 +191,8 @@ class NotionDatabaseHelper {
      * @param string $appName Application name
      * @return array Array of workspace info (without decrypted keys for security)
      */
-    public function listCredentials(string $appName): array {
+    public function listCredentials(string $appName): array
+    {
         $query = <<<SQL
             SELECT id, workspace_id, workspace_name, is_active, created_at, last_used_at
             FROM notion_credentials
@@ -206,7 +213,8 @@ class NotionDatabaseHelper {
      * @param string $workspaceId Workspace ID
      * @return bool True if disabled
      */
-    public function disableCredentials(string $appName, string $workspaceId): bool {
+    public function disableCredentials(string $appName, string $workspaceId): bool
+    {
         $query = <<<SQL
             UPDATE notion_credentials
             SET is_active = 0, updated_at = CURRENT_TIMESTAMP
@@ -224,7 +232,8 @@ class NotionDatabaseHelper {
      * @param string $workspaceId Workspace ID
      * @return void
      */
-    public function recordCredentialUsage(string $appName, string $workspaceId): void {
+    public function recordCredentialUsage(string $appName, string $workspaceId): void
+    {
         $query = <<<SQL
             UPDATE notion_credentials
             SET last_used_at = CURRENT_TIMESTAMP
@@ -242,7 +251,8 @@ class NotionDatabaseHelper {
      * @param string $workspaceId Workspace ID
      * @return bool True if deleted
      */
-    public function deleteCredentials(string $appName, string $workspaceId): bool {
+    public function deleteCredentials(string $appName, string $workspaceId): bool
+    {
         $query = <<<SQL
             DELETE FROM notion_credentials
             WHERE app_name = ? AND workspace_id = ?
@@ -288,6 +298,26 @@ class NotionDatabaseHelper {
     }
 
     /**
+     * Update workspace name
+     *
+     * @param string $appName Application name
+     * @param string $workspaceId Workspace ID
+     * @param string $newName New workspace name
+     * @return bool True if updated
+     */
+    public function updateWorkspaceName(string $appName, string $workspaceId, string $newName): bool
+    {
+        $query = <<<SQL
+            UPDATE notion_credentials
+            SET workspace_name = ?, updated_at = CURRENT_TIMESTAMP
+            WHERE app_name = ? AND workspace_id = ?
+        SQL;
+
+        $stmt = $this->pdo->prepare($query);
+        return $stmt->execute([$newName, $appName, $workspaceId]);
+    }
+
+    /**
      * Get workspace configuration (target database/page and custom config)
      *
      * @param string $appName Application name
@@ -295,7 +325,8 @@ class NotionDatabaseHelper {
      * @return array{database_id: string|null, page_id: string|null, config: array|null}
      * @throws \RuntimeException If credentials not found
      */
-    public function getConfiguration(string $appName, string $workspaceId): array {
+    public function getConfiguration(string $appName, string $workspaceId): array
+    {
         $query = <<<SQL
             SELECT notion_database_id, notion_page_id, config
             FROM notion_credentials
@@ -329,7 +360,8 @@ class NotionDatabaseHelper {
      * @return array Complete workspace info (without encrypted API key)
      * @throws \RuntimeException If credentials not found
      */
-    public function getWorkspaceInfo(string $appName, string $workspaceId): array {
+    public function getWorkspaceInfo(string $appName, string $workspaceId): array
+    {
         $query = <<<SQL
             SELECT id, workspace_id, workspace_name, notion_database_id, notion_page_id,
                    config, is_active, created_at, updated_at, last_used_at
