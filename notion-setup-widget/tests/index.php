@@ -579,7 +579,7 @@
         function setupEventListeners() {
             tokenInput.addEventListener('input', debounceValidation);
             tokenName.addEventListener('input', updateSaveButtonState);
-            saveButton.addEventListener('click', handleSaveToken);
+            saveButton.addEventListener('click', saveToken);
         }
 
         function debounceValidation() {
