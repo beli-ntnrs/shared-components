@@ -3,6 +3,9 @@
  * PHPUnit Bootstrap - Setup for NotionSetupWidget tests
  */
 
+// Setup
+require_once __DIR__ . '/../vendor/autoload.php';
+
 // Define paths - we're in shared/components/notion-setup-widget/tests/
 define('WIDGET_ROOT', realpath(__DIR__ . '/..'));
 define('COMPONENTS_ROOT', realpath(__DIR__ . '/../..'));

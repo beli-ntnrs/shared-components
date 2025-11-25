@@ -44,7 +44,8 @@ if ($request_method === 'OPTIONS') {
 }
 
 // Response helper
-function json_response($data, $status = 200) {
+function json_response($data, $status = 200)
+{
     header('Content-Type: application/json');
     http_response_code($status);
     echo json_encode($data);
@@ -53,39 +54,173 @@ function json_response($data, $status = 200) {
 
 // ============ API Routes ============
 
-// Route to actual API files in public/api/ directory
-$apiFile = null;
+$controller = new NotionSetupWidgetController($pdo);
 
-// POST /api/validate-token - Validate Notion token (real Notion API)
-if ($request_method === 'POST' && $request_uri === '/api/validate-token') {
-    $apiFile = __DIR__ . '/../public/api/validate-token.php';
+// Helper to create request/response objects
+function create_objects($body, $queryParams = [])
+{
+    $request = new class ($body, $queryParams) {
+        private $body;
+        private $queryParams;
+        public function __construct($body, $queryParams)
+        {
+            $this->body = $body;
+            $this->queryParams = $queryParams;
+        }
+        public function getParsedBody()
+        {
+            return $this->body;
+        }
+        public function getQueryParams()
+        {
+            return $this->queryParams;
+        }
+    };
+
+    $response = new class {
+        public function getBody()
+        {
+            return new class {
+                public function write($s)
+                {
+                    echo $s;
+                }
+            };
+        }
+        public function withStatus($code)
+        {
+            http_response_code($code);
+            return $this;
+        }
+        public function withHeader($name, $value)
+        {
+            header("$name: $value");
+            return $this;
+        }
+    };
+
+    return [$request, $response];
 }
 
-// POST /api/save-token - Save token with user-provided name
-if ($request_method === 'POST' && $request_uri === '/api/save-token') {
-    $apiFile = __DIR__ . '/../public/api/save-token.php';
-}
+$queryString = parse_url($_SERVER['REQUEST_URI'], PHP_URL_QUERY) ?? '';
+parse_str($queryString, $queryParams);
+$path = parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH);
 
-// GET /api/list-tokens - List all saved tokens for app
-if ($request_method === 'GET' && $request_uri === '/api/list-tokens') {
-    $apiFile = __DIR__ . '/../public/api/list-tokens.php';
-}
-
-// POST /api/delete-token - Delete a saved token
-if ($request_method === 'POST' && $request_uri === '/api/delete-token') {
-    $apiFile = __DIR__ . '/../public/api/delete-token.php';
-}
-
-// POST /api/get-token - Get token for editing (retrieve + decrypt)
-if ($request_method === 'POST' && $request_uri === '/api/get-token') {
-    $apiFile = __DIR__ . '/../public/api/get-token.php';
-}
-
-// If we have an API file to load, include it and exit
-if ($apiFile && file_exists($apiFile)) {
-    require $apiFile;
+// POST /api/notion/validate-token
+if ($request_method === 'POST' && $path === '/api/notion/validate-token') {
+    [$req, $res] = create_objects($request_json, $queryParams);
+    $controller->validateToken($req, $res);
     exit;
 }
+
+// POST /api/notion/credentials
+if ($request_method === 'POST' && $path === '/api/notion/credentials') {
+    [$req, $res] = create_objects($request_json, $queryParams);
+    $controller->createWorkspace($req, $res);
+    exit;
+}
+
+// GET /api/notion/credentials
+if ($request_method === 'GET' && $path === '/api/notion/credentials') {
+    [$req, $res] = create_objects([], $queryParams);
+    $controller->listWorkspaces($req, $res);
+    exit;
+}
+
+// DELETE /api/notion/credentials/{id}
+if ($request_method === 'DELETE' && preg_match('#^/api/notion/credentials/([^/]+)$#', $path, $matches)) {
+    [$req, $res] = create_objects([], $queryParams);
+    $controller->deleteWorkspace($req, $res, ['workspace_id' => $matches[1]]);
+    exit;
+}
+
+// PATCH /api/notion/credentials/{id}
+if ($request_method === 'PATCH' && preg_match('#^/api/notion/credentials/([^/]+)$#', $path, $matches)) {
+    [$req, $res] = create_objects($request_json, $queryParams);
+    $controller->renameWorkspace($req, $res, ['workspace_id' => $matches[1]]);
+    exit;
+}
+
+// ============ Legacy API Compatibility Routes (for tests/index.php) ============
+
+// POST /api/validate-token
+if ($request_method === 'POST' && $path === '/api/validate-token') {
+    [$req, $res] = create_objects($request_json, $queryParams);
+    $controller->validateToken($req, $res);
+    exit;
+}
+
+// POST /api/save-token
+if ($request_method === 'POST' && $path === '/api/save-token') {
+    // Adapter: Transform legacy payload to new controller format
+    $legacyBody = $request_json;
+    $newBody = [
+        'api_key' => $legacyBody['token'] ?? '',
+        'workspace_name' => $legacyBody['token_name'] ?? '',
+        'app' => $legacyBody['app'] ?? '',
+        'workspace_id' => 'ws_' . substr(md5(uniqid()), 0, 10) // Generate ID if missing
+    ];
+
+    [$req, $res] = create_objects($newBody, $queryParams);
+    $controller->createWorkspace($req, $res);
+    exit;
+}
+
+// GET /api/list-tokens
+if ($request_method === 'GET' && $path === '/api/list-tokens') {
+    // Adapter: Transform response format (workspaces -> tokens)
+    ob_start();
+    [$req, $res] = create_objects([], $queryParams);
+    $controller->listWorkspaces($req, $res);
+    $output = ob_get_clean();
+
+    $data = json_decode($output, true);
+    if (isset($data['workspaces'])) {
+        $data['tokens'] = $data['workspaces']; // Alias workspaces as tokens
+        unset($data['workspaces']);
+    }
+
+    json_response($data);
+    exit;
+}
+
+// POST /api/delete-token
+if ($request_method === 'POST' && $path === '/api/delete-token') {
+    // Adapter: Map POST body to DELETE method arguments
+    $workspaceId = $request_json['workspace_id'] ?? '';
+
+    [$req, $res] = create_objects([], $queryParams);
+    $controller->deleteWorkspace($req, $res, ['workspace_id' => $workspaceId]);
+    exit;
+}
+
+// POST /api/get-token
+if ($request_method === 'POST' && $path === '/api/get-token') {
+    // Adapter: Map to getConfiguration and extract token
+    $workspaceId = $request_json['workspace_id'] ?? '';
+    $app = $request_json['app'] ?? '';
+
+    // Manually call helper since controller doesn't expose raw token getter easily via API
+    // But we can use getConfiguration if it returns the token (it usually returns encrypted or masked?)
+    // Let's try to use the database helper directly for this specific legacy requirement
+    try {
+        $config = $dbHelper->getConfiguration($app, $workspaceId);
+        if ($config && isset($config['api_key'])) {
+            // Decrypt if necessary, but getConfiguration usually returns decrypted if using helper?
+            // Wait, NotionDatabaseHelper::getConfiguration returns decrypted array?
+            // Let's check NotionDatabaseHelper.php
+            // It calls $this->encryption->decrypt($row['access_token'])
+            json_response(['success' => true, 'token' => $config['api_key']]);
+        } else {
+            json_response(['success' => false, 'error' => 'Token not found']);
+        }
+    } catch (Exception $e) {
+        json_response(['success' => false, 'error' => $e->getMessage()]);
+    }
+    exit;
+}
+
+// ============ UI Routes ============
 
 // ============ UI Routes ============
 

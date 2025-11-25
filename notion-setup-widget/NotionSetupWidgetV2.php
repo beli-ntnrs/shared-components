@@ -10,7 +10,8 @@ namespace Notioneers\Shared\Notion;
 
 use PDO;
 
-class NotionSetupWidgetV2 {
+class NotionSetupWidgetV2
+{
     private PDO $pdo;
     private NotionEncryption $encryption;
     private string $appName;
@@ -28,11 +29,13 @@ class NotionSetupWidgetV2 {
         $this->widgetId = htmlspecialchars($widgetId, ENT_QUOTES, 'UTF-8');
     }
 
-    public function render(): string {
+    public function render(): string
+    {
         return $this->renderHTML() . $this->renderJavaScript();
     }
 
-    private function renderHTML(): string {
+    private function renderHTML(): string
+    {
         $workspaces = $this->getWorkspaces();
         $workspacesJson = json_encode($workspaces);
 
@@ -79,6 +82,20 @@ class NotionSetupWidgetV2 {
                     <!-- Validation Status -->
                     <div class="col-12">
                         <div id="token-validation-status"></div>
+                    </div>
+
+                    <!-- Resources Display -->
+                    <div class="col-12">
+                        <div id="resources-grid" class="row g-4 d-none bg-light rounded-3 p-3 border">
+                            <div class="col-md-6">
+                                <h6 class="text-depth fw-600 mb-3"><i class="bi bi-file-earmark me-2"></i>Pages</h6>
+                                <div id="pages-list" class="d-grid gap-2"></div>
+                            </div>
+                            <div class="col-md-6">
+                                <h6 class="text-depth fw-600 mb-3"><i class="bi bi-database-fill me-2"></i>Databases</h6>
+                                <div id="databases-list" class="d-grid gap-2"></div>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Workspace Name Input -->
@@ -302,10 +319,13 @@ code {
     margin: 0;
 }
 </style>
+
+</style>
 HTML;
     }
 
-    private function renderJavaScript(): string {
+    private function renderJavaScript(): string
+    {
         $appName = $this->appName;
 
         $js = <<<'JAVASCRIPT'
@@ -456,6 +476,9 @@ HTML;
                 '<small class="text-stone d-block mt-1">ID: <code>' + escapeHtml(id) + '</code></small>' +
                 '</div>' +
                 '<div class="workspace-actions">' +
+                '<button type="button" class="btn btn-sm btn-outline-secondary" onclick="renameWorkspace(\'' + escapeHtml(id) + '\', \'' + escapeHtml(name) + '\')" title="Rename workspace">' +
+                '<i class="bi bi-pencil"></i>' +
+                '</button>' +
                 '<button type="button" class="btn btn-sm btn-outline-danger" onclick="deleteWorkspace(\'' + escapeHtml(id) + '\')" title="Remove workspace">' +
                 '<i class="bi bi-trash"></i>' +
                 '</button>' +
@@ -468,6 +491,31 @@ HTML;
                 '</div>';
         }).join('');
         container.innerHTML = html;
+    }
+
+    async function renameWorkspace(workspaceId, currentName) {
+        const newName = prompt('Enter new name for this workspace:', currentName);
+        if (!newName || newName === currentName) return;
+
+        try {
+            const response = await fetch('/api/notion/credentials/' + workspaceId, {
+                method: 'PATCH',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    app: appName,
+                    workspace_name: newName
+                })
+            });
+
+            const result = await response.json();
+            if (result.success) {
+                loadWorkspaces();
+            } else {
+                alert('Failed to rename workspace: ' + (result.error || 'Unknown error'));
+            }
+        } catch (error) {
+            alert('Error: ' + error.message);
+        }
     }
 
     async function deleteWorkspace(workspaceId) {
@@ -515,6 +563,7 @@ HTML;
     }
 
     // Expose for onclick handlers
+    window.renameWorkspace = renameWorkspace;
     window.deleteWorkspace = deleteWorkspace;
 })();
 </script>
@@ -523,7 +572,8 @@ JAVASCRIPT;
         return str_replace('APP_NAME_PLACEHOLDER', $appName, $js);
     }
 
-    private function getWorkspaces(): array {
+    private function getWorkspaces(): array
+    {
         $query = "SELECT * FROM notion_credentials WHERE app_name = ? AND is_active = 1 ORDER BY created_at DESC";
         $stmt = $this->pdo->prepare($query);
         $stmt->execute([$this->appName]);

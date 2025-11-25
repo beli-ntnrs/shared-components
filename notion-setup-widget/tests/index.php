@@ -13,6 +13,7 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,10 +26,13 @@
         }
 
         body {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #F2F4F2;
+            /* bg-mist */
             min-height: 100vh;
             padding: 2rem 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: 'TWK Lausanne', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            color: #063312;
+            /* text-depth */
         }
 
         .container-widget {
@@ -38,36 +42,42 @@
 
         .header {
             text-align: center;
-            color: white;
+            color: #063312;
+            /* text-depth */
             margin-bottom: 2rem;
         }
 
         .header h1 {
             font-size: 2.5rem;
             margin-bottom: 0.5rem;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            font-weight: 700;
         }
 
         .header p {
             font-size: 1.1rem;
-            opacity: 0.9;
+            opacity: 0.8;
+            color: #666;
+            /* text-stone */
         }
 
         .widget-card {
             background: white;
             border-radius: 12px;
             padding: 2rem;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 4px 20px rgba(6, 51, 18, 0.08);
             margin-bottom: 2rem;
+            border: 1px solid rgba(6, 51, 18, 0.1);
         }
 
         .section-title {
             font-size: 1.3rem;
             font-weight: 600;
-            color: #333;
+            color: #063312;
+            /* text-depth */
             margin-bottom: 1.5rem;
             padding-bottom: 1rem;
-            border-bottom: 2px solid #f0f0f0;
+            border-bottom: 2px solid #F2F4F2;
+            /* bg-mist */
         }
 
         .form-group {
@@ -76,23 +86,38 @@
 
         .form-label {
             font-weight: 600;
-            color: #333;
+            color: #063312;
+            /* text-depth */
             margin-bottom: 0.5rem;
             display: block;
         }
 
         .form-control {
             padding: 0.75rem;
-            border: 2px solid #e0e0e0;
+            border: 1px solid #AFCAAF;
+            /* border-success-subtle approx */
             border-radius: 6px;
             font-size: 1rem;
             transition: all 0.2s;
         }
 
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #063312;
+            /* text-depth */
+            box-shadow: 0 0 0 3px rgba(146, 239, 154, 0.25);
+            /* bg-bloom with opacity */
             outline: none;
+        }
+
+        .btn-primary {
+            background-color: #063312;
+            /* bg-depth */
+            border-color: #063312;
+        }
+
+        .btn-primary:hover {
+            background-color: #0a4f1c;
+            border-color: #0a4f1c;
         }
 
         .validation-status {
@@ -105,23 +130,26 @@
 
         .validation-status.success {
             display: block;
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
+            background: rgba(146, 239, 154, 0.1);
+            /* bg-bloom 10% */
+            color: #063312;
+            /* text-depth */
+            border: 1px solid #92EF9A;
+            /* bg-bloom */
         }
 
         .validation-status.error {
             display: block;
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
+            background: rgba(237, 103, 103, 0.1);
+            color: #842029;
+            border: 1px solid #ED6767;
         }
 
         .validation-status.loading {
             display: block;
-            background: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
+            background: rgba(82, 180, 217, 0.1);
+            color: #084298;
+            border: 1px solid #52B4D9;
         }
 
         .spinner-border {
@@ -133,10 +161,11 @@
         .resources-grid {
             display: none;
             margin: 1.5rem 0;
-            background: #f8f9fa;
+            background: #F2F4F2;
+            /* bg-mist */
             padding: 1.5rem;
             border-radius: 8px;
-            border: 1px solid #e0e0e0;
+            border: 1px solid #E5E5E5;
             grid-template-columns: 1fr 1fr;
             gap: 2rem;
         }
@@ -153,7 +182,8 @@
         .resources-column-title {
             font-weight: 600;
             font-size: 1.1rem;
-            color: #333;
+            color: #063312;
+            /* text-depth */
             margin-bottom: 1rem;
             display: flex;
             align-items: center;
@@ -176,16 +206,21 @@
             padding: 0.875rem 1rem;
             border-radius: 6px;
             margin-bottom: 0.75rem;
-            border-left: 3px solid #667eea;
+            border-left: 3px solid #063312;
+            /* bg-depth */
             display: flex;
             align-items: center;
             transition: all 0.2s;
             border: 1px solid #e8e8e8;
+            border-left-width: 3px;
             position: relative;
         }
 
         .resource-item:hover {
-            border-left-color: #5568d3;
+            border-left-color: #92EF9A;
+            /* bg-bloom */
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
         }
 
         .resource-actions {
@@ -425,6 +460,7 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container-widget">
         <!-- Header -->
@@ -442,15 +478,11 @@
             <!-- Token Input Form -->
             <div class="form-group">
                 <label class="form-label" for="tokenInput">Notion Integration Token</label>
-                <input
-                    type="text"
-                    id="tokenInput"
-                    class="form-control"
-                    placeholder="Paste your Notion integration token (starts with ntn_ or secret_)"
-                    autofocus
-                />
+                <input type="text" id="tokenInput" class="form-control"
+                    placeholder="Paste your Notion integration token (starts with ntn_ or secret_)" autofocus />
                 <small class="form-text text-muted">
-                    Get your token from <a href="https://www.notion.so/my-integrations" target="_blank">My Integrations</a>
+                    Get your token from <a href="https://www.notion.so/my-integrations" target="_blank">My
+                        Integrations</a>
                 </small>
             </div>
 
@@ -472,23 +504,14 @@
             <!-- Token Name Input -->
             <div class="form-group">
                 <label class="form-label" for="tokenName">Give this token a name</label>
-                <input
-                    type="text"
-                    id="tokenName"
-                    class="form-control"
-                    placeholder="e.g., My Project, Work Space, etc."
-                    disabled
-                />
+                <input type="text" id="tokenName" class="form-control" placeholder="e.g., My Project, Work Space, etc."
+                    disabled />
                 <small class="form-text text-muted">Name something meaningful to identify this token</small>
             </div>
 
             <!-- Save Button -->
             <div class="form-group">
-                <button
-                    id="saveButton"
-                    class="btn btn-primary w-100"
-                    disabled
-                >
+                <button id="saveButton" class="btn btn-primary w-100" disabled>
                     <i class="bi bi-floppy"></i> Save Token
                 </button>
             </div>
@@ -1005,4 +1028,5 @@
         init();
     </script>
 </body>
+
 </html>
