@@ -533,17 +533,7 @@
             </div>
         </div>
 
-        <!-- Info Box -->
-        <div class="widget-card" style="background: #f8f9fa; border-left: 4px solid #667eea;">
-            <strong>How it works:</strong>
-            <ol style="margin-bottom: 0; padding-left: 1.5rem;">
-                <li><strong>Paste your token</strong> - Get it from Notion's integration settings</li>
-                <li><strong>Wait for validation</strong> - We'll check if it's valid and load your databases/pages</li>
-                <li><strong>Name your token</strong> - Give it a memorable name</li>
-                <li><strong>Save it</strong> - Click Save Token to store it securely</li>
-                <li><strong>Use it</strong> - Your token is now available in your apps</li>
-            </ol>
-        </div>
+
     </div>
 
     <script>
