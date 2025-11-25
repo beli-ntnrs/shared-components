@@ -548,7 +548,7 @@
 
     <script>
         // Configuration
-        const API_BASE = '/api';
+        const API_BASE = '/api/notion';
         const APP_NAME = 'test-app'; // Change to your app name
         const VALIDATION_DELAY = 1000; // Debounce validation to 1 second
 
@@ -819,26 +819,28 @@
             saveButton.disabled = !(hasToken && hasName);
         }
 
-        async function handleSaveToken() {
-            if (!currentValidToken || !tokenName.value.trim()) {
-                alert('Please enter a token name');
-                return;
-            }
+        async function saveToken() {
+            if (!currentValidToken) return;
 
-            saveButton.disabled = true;
             const originalText = saveButton.innerHTML;
+            saveButton.disabled = true;
             saveButton.innerHTML = '<span class="spinner"></span> Saving...';
 
+            // Generate a random ID if we don't have one (for new workspaces)
+            // In a real app, the backend might handle this or we use the workspace ID from Notion if available
+            const workspaceId = 'ws_' + Math.random().toString(36).substr(2, 9);
+
             try {
-                const response = await fetch(`${API_BASE}/save-token`, {
+                const response = await fetch(`${API_BASE}/credentials`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        token: currentValidToken,
-                        token_name: tokenName.value.trim(),
-                        app: APP_NAME
+                        api_key: currentValidToken,
+                        workspace_name: tokenName.value.trim(),
+                        app: APP_NAME,
+                        workspace_id: workspaceId
                     })
                 });
 
@@ -873,12 +875,15 @@
 
         async function loadTokens() {
             try {
-                const response = await fetch(`${API_BASE}/list-tokens?app=${encodeURIComponent(APP_NAME)}`);
+                const response = await fetch(`${API_BASE}/credentials?app=${encodeURIComponent(APP_NAME)}`);
                 const data = await response.json();
 
-                if (data.success && data.tokens && data.tokens.length > 0) {
+                // Handle new response format: { success: true, workspaces: [...] }
+                const tokens = data.workspaces || [];
+
+                if (data.success && tokens.length > 0) {
                     tokenContainer.innerHTML = '';
-                    data.tokens.forEach(token => {
+                    tokens.forEach(token => {
                         const item = document.createElement('div');
                         item.className = `token-item ${token.is_active ? '' : 'inactive'}`;
                         item.innerHTML = `
@@ -930,15 +935,8 @@
             }
 
             try {
-                const response = await fetch(`${API_BASE}/delete-token`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        workspace_id: workspaceId,
-                        app: APP_NAME
-                    })
+                const response = await fetch(`${API_BASE}/credentials/${workspaceId}?app=${encodeURIComponent(APP_NAME)}`, {
+                    method: 'DELETE'
                 });
 
                 const data = await response.json();
@@ -958,22 +956,12 @@
         async function loadTokenForEdit(workspaceId, tokenName) {
             try {
                 // Fetch the actual token (decrypted)
-                const response = await fetch(`${API_BASE}/get-token`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        workspace_id: workspaceId,
-                        app: APP_NAME
-                    })
-                });
-
+                const response = await fetch(`${API_BASE}/credentials/${workspaceId}?app=${encodeURIComponent(APP_NAME)}`);
                 const data = await response.json();
 
-                if (data.success && data.token) {
+                if (data.success && data.configuration && data.configuration.api_key) {
                     // Load token into input field
-                    tokenInput.value = data.token;
+                    tokenInput.value = data.configuration.api_key;
 
                     // Clear the name field (for renaming if needed)
                     tokenName.value = '';
@@ -990,7 +978,7 @@
 
                     // Highlight the token input
                     tokenInput.focus();
-                    tokenInput.style.borderColor = '#667eea';
+                    tokenInput.style.borderColor = '#063312'; // text-depth
                     setTimeout(() => {
                         tokenInput.style.borderColor = '';
                     }, 2000);
