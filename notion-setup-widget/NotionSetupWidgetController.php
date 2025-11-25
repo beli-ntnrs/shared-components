@@ -329,7 +329,7 @@ class NotionSetupWidgetController
                 );
             }
 
-            $success = $this->dbHelper->disableCredentials($appName, $workspaceId);
+            $success = $this->dbHelper->deleteCredentials($appName, $workspaceId);
 
             if (!$success) {
                 return $this->jsonError(

@@ -150,18 +150,14 @@ if ($request_method === 'GET' && preg_match('#^/api/notion/credentials/([^/]+)$#
 
 // ============ UI Routes ============
 
-// GET / - Main page (serve the complete widget from tests/index.php)
-if ($request_method === 'GET' && ($request_uri === '/' || $request_uri === '/index.php')) {
+// ============ UI Routes ============
+
+// Catch-all: Serve index.php for any other request (SPA-like behavior)
+if ($request_method === 'GET' || $request_method === 'HEAD') {
     require __DIR__ . '/index.php';
     exit;
 }
 
-// GET /tests/index.php - Alias for the widget
-if ($request_method === 'GET' && $request_uri === '/tests/index.php') {
-    require __DIR__ . '/index.php';
-    exit;
-}
-
-// 404
+// 404 (only if not GET)
 http_response_code(404);
 json_response(['error' => 'Not Found'], 404);

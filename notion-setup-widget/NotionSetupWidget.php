@@ -855,14 +855,11 @@ class NotionSetupWidget
                             tokenContainer.innerHTML = '';
                             tokens.forEach(token => {
                                 const item = document.createElement('div');
-                                item.className = `token-item ${token.is_active ? '' : 'inactive'}`;
+                                item.className = 'token-item';
                                 item.innerHTML = `
                                     <div class="token-info">
                                         <h6>
                                             ${htmlEscape(token.workspace_name)}
-                                            <span class="status-badge ${token.is_active ? 'active' : 'inactive'}">
-                                                ${token.is_active ? 'Active' : 'Inactive'}
-                                            </span>
                                         </h6>
                                         <p>
                                             <i class="bi bi-calendar3"></i>
@@ -879,9 +876,7 @@ class NotionSetupWidget
 
                                 const tokenInfo = item.querySelector('.token-info');
                                 tokenInfo.addEventListener('click', () => {
-                                    if (token.is_active) {
-                                        loadTokenForEdit(token.workspace_id, token.workspace_name);
-                                    }
+                                    loadTokenForEdit(token.workspace_id, token.workspace_name);
                                 });
 
                                 tokenContainer.appendChild(item);
