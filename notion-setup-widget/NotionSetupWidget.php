@@ -2,7 +2,7 @@
 
 namespace Notioneers\Shared\Notion;
 
-class NotionSetupWidgetV2
+class NotionSetupWidget
 {
     private $config;
 
